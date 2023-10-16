@@ -1,3 +1,13 @@
+# catkin_make
+## ERROR: plain Cmake Error
+
+```
+# 만약 catkin_make를 사용하여 plain cmake error가 존재할 경우
+# catkin_make_isolated
+# 본인은 catkin_make가 안되서 catkin clean 이후 catkin build로 변경함
+```
+
+
 # install PX4 
 
 ## bash ~/catkin_ws/src/PX4-Autopilot/Tools/setup/ubuntu.sh
