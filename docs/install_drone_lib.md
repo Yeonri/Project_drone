@@ -47,3 +47,10 @@ git clone https://github.com/ros-planning/navigation_msgs
 catkin build
 
 ```
+
+# lib
+
+### 
+```
+ sudo apt-get install ros-noetic-gmapping ros-noetic-amcl ros-noetic-move-base
+```
