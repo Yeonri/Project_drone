@@ -102,3 +102,23 @@ Failed    <<< cartographer                         [ 1 minute and 46.7 seconds ]
 pip install -U Sphinx
 pip install Sphinx
 ```
+
+# Move_base 패키지 설치 Error
+
+### Could NOT find SDL (missing: SDL_LIBRARY SDL_INCLUDE_DIR)
+```
+sudo apt-get update
+sudo apt-get install libsdl1.2-dev
+sudo apt-get install libsdl-image1.2-dev
+sudo apt-get install libsdl-dev
+```
+
+### Could not find a package configuration file provided by "tf2_sensor_msgs"
+```
+sudo apt-get install ros-noetic-tf2-sensor-msgs
+```
+
+### Could not find a package configuration file provided by "move_base_msgs
+```
+git clone https://github.com/ros-planning/navigation_msgs
+```
