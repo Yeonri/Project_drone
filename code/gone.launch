@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <!-- Mapping Configuration -->
+
+  <!-- Cartographer Node for Mapping -->
+  <node name="cartographer_node" pkg="cartographer_ros"
+        type="cartographer_node" args="
+        -configuration_directory $(find Drone_mapping)/config
+        -configuration_basename auto_cartographer.lua"
+        output="screen">
+    <remap from="scan" to="/laser/scan" />
+  </node>
+
+  <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
+        type="cartographer_occupancy_grid_node" args="-resolution 0.05" />
+
+  <!-- Localization Configuration -->
+
+  <!-- AMCL Node for Localization -->
+  <arg name="use_map_topic" default="true"/> <!-- Use the live map -->
+  <arg name="scan_topic" default="laser/scan"/>
+  <arg name="initial_pose_x" default="0.0"/>
+  <arg name="initial_pose_y" default="0.0"/>
+  <arg name="initial_pose_a" default="0.0"/>
+  <arg name="odom_frame_id" default="world"/>
+  <arg name="base_frame_id" default="base_link"/>
+  <arg name="global_frame_id" default="map"/>
+
+  <node pkg="amcl" type="amcl" name="amcl">
+    <param name="use_map_topic" value="$(arg use_map_topic)"/>
+        <!-- Publish scans from best pose at a max of 10 Hz -->
+    <param name="odom_model_type"           value="diff"/>
+    <param name="odom_alpha5"               value="0.1"/>
+    <param name="gui_publish_rate"          value="10.0"/>
+    <param name="laser_max_beams"             value="60"/>
+    <param name="laser_max_range"           value="6.0"/>
+    <param name="min_particles"             value="500"/>
+    <param name="max_particles"             value="2000"/>
+    <param name="kld_err"                   value="0.05"/>
+    <param name="kld_z"                     value="0.99"/>
+    <param name="odom_alpha1"               value="0.2"/>
+    <param name="odom_alpha2"               value="0.2"/>
+    <!-- translation std dev, m -->
+    <param name="odom_alpha3"               value="0.2"/>
+    <param name="odom_alpha4"               value="0.2"/>
+    <param name="laser_z_hit"               value="0.5"/>
+    <param name="laser_z_short"             value="0.05"/>
+    <param name="laser_z_max"               value="0.05"/>
+    <param name="laser_z_rand"              value="0.5"/>
+    <param name="laser_sigma_hit"           value="0.2"/>
+    <param name="laser_lambda_short"        value="0.1"/>
+    <param name="laser_model_type"          value="likelihood_field"/>
+    <!-- <param name="laser_model_type" value="beam"/> -->
+    <param name="laser_likelihood_max_dist" value="2.0"/>
+    <param name="update_min_d"              value="0.25"/>
+    <param name="update_min_a"              value="0.2"/>
+    <param name="odom_frame_id"             value="$(arg odom_frame_id)"/> 
+    <param name="base_frame_id"             value="$(arg base_frame_id)"/> 
+    <param name="global_frame_id"           value="$(arg global_frame_id)"/>
+    <param name="resample_interval"         value="1"/>
+    <!-- Increase tolerance because the computer can get quite busy -->
+    <param name="transform_tolerance"       value="1.0"/>
+    <param name="recovery_alpha_slow"       value="0.0"/>
+    <param name="recovery_alpha_fast"       value="0.0"/>
+    <param name="initial_pose_x"            value="$(arg initial_pose_x)"/>
+    <param name="initial_pose_y"            value="$(arg initial_pose_y)"/>
+    <param name="initial_pose_a"            value="$(arg initial_pose_a)"/>
+    <remap from="scan" to="/laser/scan"/>
+  </node>
+
+  <!-- Move Base Configuration for Navigation -->
+
+  <!-- RViz visualization for navigation Delete-->
+
+  <arg name="odom_topic" default="/ground_truth/state" />
+  <arg name="laser_topic" default="/laser/scan" />
+  <arg name="custom_param_file" default="$(find Drone_navigation)/config/dummy.yaml"/>
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find Drone_navigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find Drone_navigation)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find Drone_navigation)/config/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find Drone_navigation)/config/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find Drone_navigation)/config/dwa_local_planner_params.yaml" command="load" />
+    <rosparam file="$(find Drone_navigation)/config/move_base_params.yaml" command="load" />
+    <rosparam file="$(find Drone_navigation)/config/global_planner_params.yaml" command="load" />
+    <rosparam file="$(find Drone_navigation)/config/navfn_global_planner_params.yaml" command="load" />
+    <rosparam file="$(arg custom_param_file)" command="load" />
+    
+    <!-- reset frame_id parameters using user input data -->
+    <param name="global_costmap/global_frame" value="$(arg global_frame_id)"/>
+    <param name="global_costmap/robot_base_frame" value="$(arg base_frame_id)"/>
+    <param name="local_costmap/global_frame" value="$(arg odom_frame_id)"/>
+    <param name="local_costmap/robot_base_frame" value="$(arg base_frame_id)"/>
+    <param name="DWAPlannerROS/global_frame_id" value="$(arg odom_frame_id)"/>
+
+    <param name="global_costmap/laser_scan_sensor/sensor_frame" value="$(arg base_frame_id)"/>
+    <param name="global_costmap/laser_scan_sensor/topic" value="/scan"/>    
+    <param name="local_costmap/laser_scan_sensor/sensor_frame" value="$(arg base_frame_id)"/>
+    <param name="local_costmap/laser_scan_sensor/topic" value="/$(arg laser_topic)"/>
+    <param name="local_costmap/obstacle_layer/laser_scan_sensor/topic" value="/$(arg laser_topic)"/>
+
+    <!-- <remap from="cmd_vel" to="navigation_velocity_smoother/raw_cmd_vel"/> -->
+    <remap from="odom" to="$(arg odom_topic)"/>
+    <remap from="scan" to="/laser/scan"/>
+    
+  </node>
+
+  <!-- RViz visualization for mapping -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find Drone_mapping)/rviz/cartographer_mapping.rviz" />
+
+</launch>
+
