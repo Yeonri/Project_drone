@@ -1,17 +1,9 @@
 # Install_raspberry_ubuntu 20.04 LTS
 
-하드웨어: Raspberry pi 4B 8Gb
-
-- 운영체제: Ubuntu 18.04
-  - ubuntu 18.04 운영체제 파일 (ubuntu-18.04.5-preinstalled-server-arm64+raspi4.img)
-  - https://cdimage.ubuntu.com/releases/18.04/release/
-  - ROS-Melodic
-
+- 하드웨어: Raspberry pi 4B 8Gb
 
 - 운영체제: 운영체제: Ubuntu 20.04
   - ROS-Noetic
-
-
 
 - 우분투 이미지 파일 설치 프로그램
   - https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#2-prepare-the-sd-card
