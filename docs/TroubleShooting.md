@@ -78,3 +78,27 @@ tar zxf cmake-3.19.8.tar.gz && cd cmake-3.19.8
 make
 sudo make install
 ```
+# Cartographer 설치 Error
+
+
+### 
+```
+Errors     << cartographer:make /home/yeonri/catkin_ws/logs/cartographer/build.make.000.log
+
+Extension error:
+Could not import extension sphinx.builders.latex (exception: cannot import name 'contextfunction' from 'jinja2' (/home/yeonri/.local/lib/python3.8/site-packages/jinja2/__init__.py))
+make[2]: *** [docs/CMakeFiles/build_doc.dir/build.make:77: docs/CMakeFiles/build_doc] Error 2
+make[1]: *** [CMakeFiles/Makefile2:3108: docs/CMakeFiles/build_doc.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:160: all] Error 2
+cd /home/yeonri/catkin_ws/build/cartographer; catkin build --get-env cartographer | catkin env -si  /usr/bin/make --jobserver-auth=3,4; cd -
+
+..............................................................................
+Failed     << cartographer:make                    [ Exited with code 2 ]     
+Failed    <<< cartographer                         [ 1 minute and 46.7 seconds ]
+```
+### Sphinx 의존성 설치
+```
+pip install -U Sphinx
+pip install Sphinx
+```
