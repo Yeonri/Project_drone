@@ -59,4 +59,4 @@ rosdep install --from-paths src --ignore-src -r -y
 catkin build
 source ~/catkin_ws/devel/setup.bash
 
-sudo apt-get install ros-melodic-tf2-sensor-msgs
+sudo apt-get install ros-noetic-tf2-sensor-msgs
