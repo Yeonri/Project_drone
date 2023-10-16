@@ -20,12 +20,27 @@ catkin_ws_source="source ~/catkin_ws/devel/setup.bash"
 echo "$catkin_ws_source" >> ~/.bashrc
 eval $catkin_ws_source
 ```
-
-
-## ERROR: plain Cmake Error
+# Cartographer
+```
+cd ~/catkin_ws/src
+mkdir cartographer
+cd cartographer
+git clone https://github.com/cartographer-project/cartographer.git
+git clone https://github.com/cartographer-project/cartographer_ros.git
+```
+```
+rosdep install --from-paths . --ignore-src -r -y
+cd catrographer/scripts
+./install_abseil.sh
+```
+```
+cd ~/catkin_ws
+catkin build
 
 ```
-# 만약 catkin_make를 사용하여 plain cmake error가 존재할 경우
-# catkin_make_isolated
-# 본인은 catkin_make가 안되서 catkin clean 이후 catkin build로 변경함
+# Move_base
+```
+git clone https://github.com/ros-planning/navigation.git
+git clone https://github.com/ros-planning/navigation_msgs
+
 ```
