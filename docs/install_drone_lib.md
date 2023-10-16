@@ -40,8 +40,10 @@ catkin build
 ```
 # Move_base
 ```
+cd ~/catkin_ws/src
 sudo apt-get install ros-noetic-tf2-sensor-msgs
 git clone https://github.com/ros-planning/navigation.git
 git clone https://github.com/ros-planning/navigation_msgs
+catkin build
 
 ```
