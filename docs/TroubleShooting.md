@@ -75,6 +75,10 @@ CMake Error in CMakeLists.txt:
 
 
 ```
+```
+Project 'libmavconn' specifies '/include' as an include dir, which is not
+  found.
+```
 
 ### 1. 종속 패키지 cmake 설치 명령어
 ```
