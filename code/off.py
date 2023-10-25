@@ -64,7 +64,7 @@ if __name__ == "__main__":
         if(current_state.mode != "OFFBOARD" and (rospy.Time.now() - last_req) > rospy.Duration(5.0)):
             if(set_mode_client.call(offb_set_mode).mode_sent == True):
                 rospy.loginfo("OFFBOARD enabled")
-
+                break
             last_req = rospy.Time.now()
         else:
             if(not current_state.armed and (rospy.Time.now() - last_req) > rospy.Duration(5.0)):
@@ -73,7 +73,9 @@ if __name__ == "__main__":
 
                 last_req = rospy.Time.now()
 
+
         local_pos_pub.publish(pose)
 
         rate.sleep()
 
+    rospy.loginfo("OFFBOARD mode set, exiting script.")

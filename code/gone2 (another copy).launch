@@ -3,20 +3,26 @@
 
   <!-- Mapping Configuration -->
   <arg name="scan_topic"  default="/laser/scan" />
-  <arg name="odom_frame_id" default="world"/>
+  <arg name="laser_topic"  default="/laser/scan" />
+  <arg name="odom_topic"  default="odom" />
+  <arg name="odom_frame_id" default="odom"/>
   <arg name="base_frame_id" default="base_link"/>
   <arg name="global_frame_id" default="map"/>
-
+  
   <param name="robot_description"
     textfile="$(find drone_mapping )/config/backpack_2d.urdf" /> 
 
   <node name="robot_state_publisher" pkg="robot_state_publisher"
     type="robot_state_publisher" />
     
-  <!--<node pkg="robot_localization" type="ekf_localization_node" name="ekf_node_name" clear_params="true">
-    <rosparam command="load" file="$(find robot_localization)/params/ekf_template.yaml" />
-  </node> -->
-
+  <node pkg="tf" type="static_transform_publisher" name="base_link_rplidar_link" args="0 0 0 0 0 0 base_link rplidar_link 100"/> 
+  
+  <node pkg="tf" type="static_transform_publisher" name="base_foot_base_link" args="0 0 0 0 0 0 base_footprint base_link 100"/> 
+  
+  <node pkg="tf" type="static_transform_publisher" name="odom_base_link" args="0 0 0 0 0 0 odom base_footprint 100"/>
+  
+  <node pkg="tf" type="static_transform_publisher" name="map_odom" args="0 0 0 0 0 0 map odom 100"/>
+  
   <!-- Cartographer Node for Mapping -->
   <node name="cartographer_node" pkg="cartographer_ros"
         type="cartographer_node" args="
@@ -25,7 +31,6 @@
         output="screen">
     <remap from="scan" to="/laser/scan" />
   </node>
-
   <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
         type="cartographer_occupancy_grid_node" args="-resolution 0.2" />
 
@@ -33,8 +38,6 @@
 
   <!-- RViz visualization for navigation Delete-->
 
-  <arg name="odom_topic" default="/ground_truth/state" />
-  <arg name="laser_topic" default="$(arg scan_topic)" />
   <arg name="custom_param_file" default="$(find drone_navigation)/config/dummy.yaml"/>
 
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
@@ -60,17 +63,11 @@
     <param name="local_costmap/laser_scan_sensor/sensor_frame" value="$(arg base_frame_id)"/>
     <param name="local_costmap/laser_scan_sensor/topic" value="/$(arg laser_topic)"/>
     <param name="local_costmap/obstacle_layer/laser_scan_sensor/topic" value="/$(arg laser_topic)"/>
-
-    <!-- <remap from="cmd_vel" to="navigation_velocity_smoother/raw_cmd_vel"/> -->
-    <remap from="world" to="$(arg odom_topic)"/>
-    <remap from="scan" to="$(arg laser_topic)"/>
     
   </node>
 
   <!-- RViz visualization for mapping -->
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find drone_mapping)/rviz/cartographer_mapping.rviz" />
-    <remap from="world" to="$(arg odom_topic)"/>
-  </node>
 
 </launch>
 

@@ -7,15 +7,17 @@
   <arg name="base_frame_id" default="base_link"/>
   <arg name="global_frame_id" default="map"/>
 
-  <param name="robot_description"
-    textfile="$(find drone_mapping )/config/backpack_2d.urdf" /> 
 
-  <node name="robot_state_publisher" pkg="robot_state_publisher"
-    type="robot_state_publisher" />
-    
-  <!--<node pkg="robot_localization" type="ekf_localization_node" name="ekf_node_name" clear_params="true">
-    <rosparam command="load" file="$(find robot_localization)/params/ekf_template.yaml" />
-  </node> -->
+  <node pkg="laser_scan_matcher" type="laser_scan_matcher_node" name="laser_scan_matcher">
+    <param name="fixed_frame" type="string" value="$(arg global_frame_id)"/> <!-- typically map -->
+    <param name="odom_frame" type="string" value="$(arg odom_frame_id)"/> <!-- typically odom -->
+    <param name="base_frame" type="string" value="$(arg base_frame_id)"/> <!-- typically base_link -->
+    <remap from="scan" to="$(arg scan_topic)"/>
+    <remap from="odom" to="/$(arg odom_frame_id)"/>
+  </node>
+
+  <node pkg="tf" type="static_transform_publisher" name="odom_to_base_link"
+        args="0 0 0 0 0 0 $(arg odom_frame_id) $(arg base_frame_id) 100" />
 
   <!-- Cartographer Node for Mapping -->
   <node name="cartographer_node" pkg="cartographer_ros"
@@ -62,15 +64,13 @@
     <param name="local_costmap/obstacle_layer/laser_scan_sensor/topic" value="/$(arg laser_topic)"/>
 
     <!-- <remap from="cmd_vel" to="navigation_velocity_smoother/raw_cmd_vel"/> -->
-    <remap from="world" to="$(arg odom_topic)"/>
+    <remap from="odom" to="$(arg odom_topic)"/>
     <remap from="scan" to="$(arg laser_topic)"/>
     
   </node>
 
   <!-- RViz visualization for mapping -->
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find drone_mapping)/rviz/cartographer_mapping.rviz" />
-    <remap from="world" to="$(arg odom_topic)"/>
-  </node>
 
 </launch>
 

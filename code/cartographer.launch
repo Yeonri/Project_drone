@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  
+  <arg name="scan_topic"  default="/laser/scan" />
+  <arg name="odom_frame_id" default="odom"/>
+  <arg name="base_frame_id" default="base_link"/>
+  <arg name="global_frame_id" default="map"/>
+
+  <param name="robot_description"
+    textfile="$(find drone_mapping )/config/backpack_2d.urdf" /> 
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher"
+    type="robot_state_publisher" />
+
+  <!-- Cartographer Node for Mapping -->
+  <node name="cartographer_node" pkg="cartographer_ros"
+        type="cartographer_node" args="
+        -configuration_directory $(find drone_mapping)/config
+        -configuration_basename drone_cartographer.lua"
+        output="screen">
+    <remap from="scan" to="/laser/scan" />
+  </node>
+
+</launch>
+

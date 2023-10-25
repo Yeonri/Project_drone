@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <!-- Mapping Configuration -->
+  <arg name="scan_topic"  default="/laser/scan" />
+  <arg name="laser_topic"  default="/laser/scan" />
+  <arg name="odom_frame" default="odom"/>
+  <arg name="odom_topic"  default="odom" />
+  <arg name="base_frame" default="base_link"/>
+  <arg name="global_frame" default="map"/>
+  
+  <node pkg="rviz" type="rviz" name="$(anon rviz)" args="-d $(find drone_mapping)/rviz/gmapping.rviz" />
+  
+  <param name="robot_description"
+    textfile="$(find drone_mapping )/config/backpack_2d.urdf" /> 
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher"
+    type="robot_state_publisher" />
+    
+  <node pkg="tf" type="static_transform_publisher" name="base_link_rplidar_link" args="0 0 0 0 0 0 base_link rplidar_link 100"/> 
+  
+  <node pkg="tf" type="static_transform_publisher" name="base_foot_base_link" args="0 0 0 0 0 0 base_footprint base_link 100"/> 
+  
+  <node pkg="tf" type="static_transform_publisher" name="odom_base_link" args="0 0 0 0 0 0 odom base_footprint 100"/>
+  
+  <node pkg="tf" type="static_transform_publisher" name="map_odom" args="0 0 0 0 0 0 map odom 100"/>
+  <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
+    <param name="transform_publish_period" value="1"/>
+    <param name="base_frame" value="$(arg base_frame)"/>
+    <param name="odom_frame" value="$(arg odom_frame)"/>
+    <param name="map_update_interval" value="5.0"/>
+    <param name="maxUrange" value="6.0"/>
+    <param name="maxRange" value="8.0"/>
+    <param name="sigma" value="0.05"/>
+    <param name="kernelSize" value="1"/>
+    <param name="lstep" value="0.05"/>
+    <param name="astep" value="0.05"/>
+    <param name="iterations" value="5"/>
+    <param name="lsigma" value="0.075"/>
+    <param name="ogain" value="3.0"/>
+    <param name="lskip" value="0"/>
+    <param name="minimumScore" value="200"/>
+    <param name="srr" value="0.01"/>
+    <param name="srt" value="0.02"/>
+    <param name="str" value="0.01"/>
+    <param name="stt" value="0.02"/>
+    <param name="linearUpdate" value="0.5"/>
+    <param name="angularUpdate" value="0.436"/>
+    <param name="temporalUpdate" value="-1.0"/>
+    <param name="resampleThreshold" value="0.5"/>
+    <param name="particles" value="80"/>
+
+    <param name="xmin" value="-1.0"/>
+    <param name="ymin" value="-1.0"/>
+    <param name="xmax" value="1.0"/>
+    <param name="ymax" value="1.0"/>
+
+    <param name="delta" value="0.05"/>
+    <param name="llsamplerange" value="0.01"/>
+    <param name="llsamplestep" value="0.01"/>
+    <param name="lasamplerange" value="0.005"/>
+    <param name="lasamplestep" value="0.005"/>
+    <remap from="scan" to="$(arg scan_topic)"/>
+  </node>
+
+  <!-- Move Base Configuration for Navigation -->
+
+  <!-- RViz visualization for navigation Delete-->
+
+  <arg name="custom_param_file" default="$(find drone_navigation)/config/dummy.yaml"/>
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find drone_navigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find drone_navigation)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find drone_navigation)/config/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find drone_navigation)/config/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find drone_navigation)/config/dwa_local_planner_params.yaml" command="load" />
+    <rosparam file="$(find drone_navigation)/config/move_base_params.yaml" command="load" />
+    <rosparam file="$(find drone_navigation)/config/global_planner_params.yaml" command="load" />
+    <rosparam file="$(find drone_navigation)/config/navfn_global_planner_params.yaml" command="load" />
+    <rosparam file="$(arg custom_param_file)" command="load" />
+    
+    <!-- reset frame_id parameters using user input data -->
+    <param name="global_costmap/global_frame" value="$(arg global_frame)"/>
+    <param name="global_costmap/robot_base_frame" value="$(arg base_frame)"/>
+    <param name="local_costmap/global_frame" value="$(arg odom_frame)"/>
+    <param name="local_costmap/robot_base_frame" value="$(arg base_frame)"/>
+    <param name="DWAPlannerROS/global_frame_id" value="$(arg odom_frame)"/>
+
+    <param name="global_costmap/laser_scan_sensor/sensor_frame" value="$(arg base_frame)"/>
+    <param name="global_costmap/laser_scan_sensor/topic" value="/laser/scan"/>    
+    <param name="local_costmap/laser_scan_sensor/sensor_frame" value="$(arg base_frame)"/>
+    <param name="local_costmap/laser_scan_sensor/topic" value="/$(arg laser_topic)"/>
+    <param name="local_costmap/obstacle_layer/laser_scan_sensor/topic" value="/$(arg laser_topic)"/>
+    
+  </node>
+
+
+</launch>
+
