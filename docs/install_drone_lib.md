@@ -58,4 +58,5 @@ sudo apt-get install ros-noetic-robot-localization
 ### 
 ```
  sudo apt-get install ros-noetic-gmapping ros-noetic-amcl ros-noetic-move-base
+ sudo apt-get install libgtest-dev libgmock-dev
 ```
