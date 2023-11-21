@@ -3,6 +3,8 @@
 ### 필요 라이브러리 설치
 ```
 sudo apt-get install ninja-build stow
+sudo apt-get install libceres-dev
+
 ```
 
 
