@@ -122,9 +122,7 @@ pip install Sphinx
 ### Could NOT find SDL (missing: SDL_LIBRARY SDL_INCLUDE_DIR)
 ```
 sudo apt-get update
-sudo apt-get install libsdl1.2-dev
-sudo apt-get install libsdl-image1.2-dev
-sudo apt-get install libsdl-dev
+sudo apt-get install libsdl1.2-dev libsdl-image1.2-dev libsdl-dev
 ```
 
 ### Could not find a package configuration file provided by "tf2_sensor_msgs"
