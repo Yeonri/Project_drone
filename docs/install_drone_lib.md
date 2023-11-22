@@ -30,7 +30,7 @@ git clone https://github.com/cartographer-project/cartographer_ros.git
 ```
 ```
 rosdep install --from-paths . --ignore-src -r -y
-cd catrographer/scripts
+cd cartographer/scripts
 ./install_abseil.sh
 ```
 ```
