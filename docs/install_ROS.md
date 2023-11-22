@@ -36,7 +36,6 @@ source ~/.bashrc
 ### ROS 종속 패키지 설치
 ```
 sudo apt-get install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential python3-roslaunch  python3-catkin-tools
-sudo apt-get install python3-rosdep
 ```
 
 ### init & rosdep update
